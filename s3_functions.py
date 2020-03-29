@@ -8,9 +8,7 @@ def upload_file(file_name, bucket_name):
     s3 = boto3.client('s3')
     try:
         response = s3.upload_file(file_name, bucket_name, object_name)
-    except s3.exceptions.NoSuchBucket as e:
-        return e
-    except s3.exceptions.ObjectAlreadInActiveTier as e:
+    except Exception as e:
         return e
 
     return response
@@ -19,12 +17,10 @@ def upload_file(file_name, bucket_name):
 def download_file(file_name, bucket_name):
     """Downloads <file_name> from S3 bucket <bucket_name>."""
     s3 = boto3.resource('s3')
-    output = f"download/{file_name}"
+    output = f"downloads/{file_name}"
     try:
         s3.Bucket(bucket_name).download_file(file_name, output)
-    except s3.exceptions.NoSuchBucket as e:
-        return e
-    except s3.exceptions.ObjectNotInActiveTier as e:
+    except Exception as e:
         return e
 
     return output
@@ -38,6 +34,7 @@ def list_files(bucket_name):
         for item in s3.list_objects(Bucket=bucket_name)['Contents']:
             print(item)
             files.append(item)
-    except s3.exceptions.NoSuchBucket as e:
-        return e
+    except KeyError as e:
+        return [e]
+
     return files
