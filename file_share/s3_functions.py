@@ -23,8 +23,6 @@ def download_file(file_name, bucket_name):
     except Exception as e:
         return e
 
-    return output
-
 
 def list_files(bucket_name):
     """Lists files in S3 bucket <bucket_name>."""
@@ -32,9 +30,8 @@ def list_files(bucket_name):
     files = []
     try:
         for item in s3.list_objects(Bucket=bucket_name)['Contents']:
-            print(item)
             files.append(item)
-    except KeyError as e:
-        return [e]
+    except KeyError:
+        pass
 
     return files

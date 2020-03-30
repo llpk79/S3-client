@@ -9,6 +9,8 @@ verify_ssl = true
 flask = "*"
 boto3 = "*"
 python-dotenv = "*"
+flask-cognito = "*"
+flask-dynamo = "*"
 
 [requires]
 python_version = "3.8"
