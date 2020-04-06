@@ -105,7 +105,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-file_share/.env
+.env
 .venv
 env/
 venv/

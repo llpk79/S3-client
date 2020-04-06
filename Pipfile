@@ -9,8 +9,11 @@ verify_ssl = true
 flask = "*"
 boto3 = "*"
 python-dotenv = "*"
-flask-cognito = "*"
-flask-dynamo = "*"
+flask-security = "*"
+flask-sqlalchemy = "*"
+mysqlclient = "*"
+sqlalchemy-aurora-data-api = "*"
+urlparse = "*"
 
 [requires]
 python_version = "3.8"

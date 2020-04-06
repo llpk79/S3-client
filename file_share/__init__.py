@@ -1,47 +1,84 @@
+import os
+
 from dotenv import load_dotenv
 from flask import Flask
-from flask_dynamo import Dynamo
-from flask_cognito import CognitoAuth
+from flask_mail import Mail
+from flask_security import Security, SQLAlchemySessionUserDatastore
+from flask_login import LoginManager
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from .database import db_session, init_db
+from .models import User, Role, Files, RoleUser, UserFiles
+
+mail = Mail()
+security = Security()
+login_mngr = LoginManager()
 
 
 def create_app():
     app = Flask(__name__)
+    print('App created.')
+
+    # Load environment variables.
     load_dotenv()
-    # Configure DynamoDB-tables.
-    app.config['DYNAMO_TABLES'] = [
-        dict(
-             TableName='users',
-             KeySchema=[dict(AttributeName='email', KeyType='S')],
-             AttributeDefinitions=[dict(AttributeName='username', AttributeType='S')],
-             ProvisionedThroughput=dict(ReadCapacityUnits=5, WriteCapacityUnits=5)
-        ),
-        dict(
-             TableName='file-share-db',
-             KeySchema=[dict(AttributeName='name', KeyType='S')],
-             AttributeDefinitions=[dict(AttributeName='name', AttributeType='S')],
-             ProvisionedThroughput=dict(ReadCapacityUnits=5, WriteCapacityUnits=5)
-        )
-    ]
-    dynamo = Dynamo()
-    dynamo.init_app(app)
+    secret_key = os.getenv('SECRET_KEY')
+    mail_username = os.getenv('MAIL_USERNAME')
+    mail_password = os.getenv('MAIL_PASSWORD')
+    print('Environment variables loaded.')
 
-    # Configure Cognito authorization.
-    app.config.extend({
-        'COGNITO_REGION': 'eu-central-1',
-        'COGNITO_USERPOOL_ID': 'eu-central-1c3fea2',
+    # Configure AWS access keys.
+    app.config['APP_DEBUG'] = True
+    app.config['SECRET_KEY'] = secret_key
+    # app.config['SECURITY_CONFIRMABLE'] = True
+    app.config['SECURITY_TRACKABLE'] = True
+    app.config['SECURITY_PASSWORD_SALT'] = True
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_USERNAME'] = mail_username
+    app.config['MAIL_PASSWORD'] = mail_password
 
-        # optional
-        'COGNITO_APP_CLIENT_ID': 'abcdef123456',  # client ID you wish to verify user is authenticated against
-        'COGNITO_CHECK_TOKEN_EXPIRATION': False,  # disable token expiration checking for testing purposes
-    })
+    print('App configured.')
 
-    cogauth = CognitoAuth(app)
+    # Add mail to app.
+    mail.init_app(app)
 
-    @cogauth.identity_handler
-    def lookup_cognito_user(payload):
-        """Look up user in our database from Cognito JWT payload."""
-        return dynamo.tables['users'].query(key='email')
-    from . import routes
-    app.register_blueprint(routes.bp)
+    # For user tracking.
+    app.wsgi_app = ProxyFix(app.wsgi_app, 1)
+
+    # Add login_manager.
+    login_mngr.init_app(app)
+
+    @app.before_first_request
+    def create_user():
+        """For first time setup of a test user."""
+        # user_datastore.create_role(id='0', name='username', role='admin')
+        # db_session.commit()
+        # user_datastore.create_user(id=0, email='username', username='username',
+        #                            password='password')
+        # db_session.commit()
+        pass
+
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db_session.remove()
+
+    # Register blueprints.
+    with app.app_context():
+        from . import routes, auth
+        app.register_blueprint(routes.bp)
+        app.register_blueprint(auth.auth)
+
+        # Setup Flask Security.
+        user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
+        security.init_app(app, user_datastore)
+        print('Security setup done.')
+
+        # Connect database.
+        print('Database connecting...')
+        init_db()
+        print('Database connected.')
+
+    app.add_url_rule('/', endpoint='index')
 
     return app
