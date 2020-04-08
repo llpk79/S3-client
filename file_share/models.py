@@ -1,26 +1,26 @@
 from .database import Base
 from flask_security import UserMixin, RoleMixin
 # from sqlalchemy import create_engine
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Boolean, Integer, DateTime, Column, String, ForeignKey
 
 
 class RoleUser(Base):
-    __tablename__ = 'RoleUser'
+    __tablename__ = 'role_user'
     id = Column(Integer(), primary_key=True, autoincrement=True)
-    user_id = Column('user_id', Integer(), ForeignKey('User.id'))
-    role_id = Column('role_id', Integer(), ForeignKey('Role.id'))
+    user_id = Column('user_id', Integer(), ForeignKey('user.id'))
+    role_id = Column('role_id', Integer(), ForeignKey('role.id'))
 
 
 class Role(Base, RoleMixin):
-    __tablename__ = 'Role'
+    __tablename__ = 'role'
     id = Column(Integer(), primary_key=True, autoincrement=True)
     name = Column(String(80), unique=True)
     role = Column(String(255))
 
 
 class User(Base, UserMixin):
-    __tablename__ = 'User'
+    __tablename__ = 'user'
     id = Column(Integer(), primary_key=True, autoincrement=True)
     email = Column(String(255), unique=True, nullable=False)
     username = Column(String(255), unique=True)
@@ -32,7 +32,7 @@ class User(Base, UserMixin):
     login_count = Column(Integer())
     active = Column(Boolean())
     confirmed_at = Column(DateTime())
-    roles = relationship('RoleUser')
+    roles = relationship('Role', secondary='role_user', backref=backref('user'))
 
     def user_payload(self):
         return {'id': self.id,
@@ -43,7 +43,7 @@ class User(Base, UserMixin):
 
 
 class Files(Base):
-    __tablename__ = 'Files'
+    __tablename__ = 'files'
     id = Column(Integer(), primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
     upload_time = Column(DateTime())
@@ -53,7 +53,7 @@ class Files(Base):
 
 
 class UserFiles(Base):
-    __tablename__ = 'UserFiles'
+    __tablename__ = 'user_files'
     id = Column(Integer(), primary_key=True, autoincrement=True)
     user_id = Column('user_id', Integer(), ForeignKey('User.id'))
     file_id = Column('file_id', Integer(), ForeignKey('Files.id'))
