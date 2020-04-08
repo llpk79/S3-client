@@ -10,12 +10,12 @@ bucket = os.getenv('BACK_END_BUCKET')
 bp = Blueprint('routes', __name__)
 
 
-@bp.route('/')
-# @login_user
+@bp.route('/index')
+@login_required
 def index():
     """Home page rendering list of files with index.html file."""
     files = list_files(bucket)
-    return render_template('files/index.html', contents=files)
+    return render_template('index.html', contents=files)
 
 
 @bp.route('/upload', methods=['POST'])
@@ -30,7 +30,7 @@ def upload():
             os.remove(file.filename)
         except OSError:
             pass
-        return redirect('/')
+        return redirect('index')
 
 
 @bp.route('/download/<file_name>', methods=['GET'])
