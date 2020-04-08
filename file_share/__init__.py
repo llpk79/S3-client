@@ -8,6 +8,7 @@ from flask_login import LoginManager
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .database import db_session, init_db
+from .forms import NewLoginForm
 from .models import User, Role, Files, RoleUser, UserFiles
 
 mail = Mail()
@@ -31,7 +32,7 @@ def create_app():
     app.config['SECRET_KEY'] = secret_key
     # app.config['SECURITY_CONFIRMABLE'] = True
     app.config['SECURITY_TRACKABLE'] = True
-    app.config['SECURITY_PASSWORD_SALT'] = True
+    app.config['SECURITY_PASSWORD_SALT'] = "salty"
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_SSL'] = True
@@ -48,37 +49,31 @@ def create_app():
 
     # Add login_manager.
     login_mngr.init_app(app)
+    login_mngr.login_view = 'mylogin'
 
-    @app.before_first_request
-    def create_user():
-        """For first time setup of a test user."""
-        # user_datastore.create_role(id='0', name='username', role='admin')
-        # db_session.commit()
-        # user_datastore.create_user(id=0, email='username', username='username',
-        #                            password='password')
-        # db_session.commit()
-        pass
 
-    @app.teardown_appcontext
-    def shutdown_session(exception=None):
-        db_session.remove()
-
+    # @app.teardown_appcontext
+    # def shutdown_session(exception=None):
+    #     db_session.remove()
+    #
     # Register blueprints.
-    with app.app_context():
-        from . import routes, auth
-        app.register_blueprint(routes.bp)
-        app.register_blueprint(auth.auth)
+    # with app.app_context():
+    from . import routes, auth
+    app.register_blueprint(routes.bp)
+    app.register_blueprint(auth.auth)
 
-        # Setup Flask Security.
-        user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
-        security.init_app(app, user_datastore)
-        print('Security setup done.')
+    # Setup Flask Security.
+    user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
+    security.init_app(app, user_datastore,
+                      login_form=NewLoginForm)
 
-        # Connect database.
-        print('Database connecting...')
-        init_db()
-        print('Database connected.')
+    print('Security setup done.')
 
-    app.add_url_rule('/', endpoint='index')
+    # Connect database.
+    print('Database connecting...')
+    init_db()
+    print('Database connected.')
+
+    # app.add_url_rule('/', endpoint='index')
 
     return app
