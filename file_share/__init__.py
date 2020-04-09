@@ -51,13 +51,6 @@ def create_app():
     login_mngr.init_app(app)
     login_mngr.login_view = 'mylogin'
 
-
-    # @app.teardown_appcontext
-    # def shutdown_session(exception=None):
-    #     db_session.remove()
-    #
-    # Register blueprints.
-    # with app.app_context():
     from . import routes, auth
     app.register_blueprint(routes.bp)
     app.register_blueprint(auth.auth)
@@ -73,7 +66,5 @@ def create_app():
     print('Database connecting...')
     init_db()
     print('Database connected.')
-
-    # app.add_url_rule('/', endpoint='index')
 
     return app
