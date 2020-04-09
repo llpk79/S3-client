@@ -1,14 +1,17 @@
 from flask_security import LoginForm, url_for_security
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_security.forms import StringField, Required, Email, BooleanField, SubmitField, requires_confirmation, Markup
+from flask_security.forms import (StringField, Required, Email, BooleanField, SubmitField, requires_confirmation,
+                                  Markup, PasswordField, password_required)
 from flask_security.utils import get_message, config_value
 from flask import current_app, request
 from .models import User
+from sqlalchemy.exc import StatementError
+from time import sleep
 
 
 class NewLoginForm(LoginForm):
-    email = StringField('Email', validators=[Required(), Email()])
-    password = StringField('Password', validators=[Required()])
+    email = StringField('Email', validators=[Required(message='Email not provided.'), Email()])
+    password = PasswordField('Password', validators=[password_required])
     remember = BooleanField('Remember me')
     submit = SubmitField('Login')
 
@@ -29,8 +32,10 @@ class NewLoginForm(LoginForm):
         if not super(LoginForm, self).validate():
             return False
 
-        self.user = User.query.filter_by(email=self.email.data).one()
-        print('boop, ', self.user, self.password.data, self.email.data)
+        try:
+            self.user = User.query.filter_by(email=self.email.data).one()
+        except StatementError:
+            sleep(5)
 
         if self.user is None:
             self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])
