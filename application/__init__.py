@@ -67,3 +67,6 @@ def create_app():
     print('Database connected.')
 
     return app
+
+
+application = create_app()
