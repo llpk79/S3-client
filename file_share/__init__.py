@@ -17,7 +17,7 @@ login_mngr = LoginManager()
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__.split('.')[0])
     print('App created.')
 
     # Load environment variables.
@@ -28,7 +28,6 @@ def create_app():
     print('Environment variables loaded.')
 
     # Configure AWS access keys.
-    app.config['APP_DEBUG'] = True
     app.config['SECRET_KEY'] = secret_key
     # app.config['SECURITY_CONFIRMABLE'] = True
     app.config['SECURITY_TRACKABLE'] = True
