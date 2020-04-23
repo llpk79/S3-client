@@ -1,7 +1,8 @@
 from flask_security import LoginForm, url_for_security
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_security.forms import (StringField, Required, Email, BooleanField, SubmitField, requires_confirmation,
-                                  Markup, PasswordField, password_required)
+from flask_security.forms import (StringField, BooleanField, SubmitField, requires_confirmation,
+                                  Markup, PasswordField, password_required, password_length, email_validator,
+                                  email_required)
 from flask_security.utils import get_message, config_value
 from flask import current_app, request
 from .models import User
@@ -10,13 +11,14 @@ from time import sleep
 
 
 class NewLoginForm(LoginForm):
-    email = StringField('Email', validators=[Required(message='Email not provided.'), Email()])
-    password = PasswordField('Password', validators=[password_required])
+    email = StringField('Email', validators=[email_required, email_validator])
+    password = PasswordField('Password', validators=[password_required, password_length])
     remember = BooleanField('Remember me')
     submit = SubmitField('Login')
 
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
+        self.user = None
         if not self.next.data:
             self.next.data = request.args.get('next', '')
         self.remember.default = config_value('DEFAULT_REMEMBER_ME')
