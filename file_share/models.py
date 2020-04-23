@@ -1,6 +1,5 @@
 from .database import Base
 from flask_security import UserMixin, RoleMixin
-# from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Boolean, Integer, DateTime, Column, String, ForeignKey
 
@@ -49,7 +48,7 @@ class Files(Base):
     upload_time = Column(DateTime())
     last_download = Column(DateTime())
     shared = Column(Boolean())
-    owner_id = Column(Integer(), ForeignKey('User.id'), nullable=False)
+    owner_id = Column(Integer(), ForeignKey('user.id'), nullable=False)
 
 
 class UserFiles(Base):
