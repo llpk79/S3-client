@@ -26,7 +26,7 @@ def get_download_dir():
     while True:
         path = paths.popleft()
         for directory in os.listdir(path):
-            if 'Downloads' == directory:
+            if directory == 'Downloads':
                 return os.path.join(home, path) + '/Downloads'
             else:
                 new_path = os.path.join(path, directory)
