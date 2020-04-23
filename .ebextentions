@@ -1,0 +1,5 @@
+packages:
+  yum:
+        mysql-devel: []
+        gcc: []
+        python-devel: []
