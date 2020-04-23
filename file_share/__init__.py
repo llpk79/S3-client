@@ -17,7 +17,7 @@ login_mngr = LoginManager()
 
 
 def create_app():
-    app = Flask(__name__.split('.')[0])
+    application = Flask(__name__.split('.')[0])
     print('App created.')
 
     # Load environment variables.
@@ -28,35 +28,35 @@ def create_app():
     print('Environment variables loaded.')
 
     # Configure AWS access keys.
-    app.config['SECRET_KEY'] = secret_key
+    application.config['SECRET_KEY'] = secret_key
     # app.config['SECURITY_CONFIRMABLE'] = True
-    app.config['SECURITY_TRACKABLE'] = True
-    app.config['SECURITY_PASSWORD_SALT'] = "salty"
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 587
-    app.config['MAIL_USE_SSL'] = True
-    app.config['MAIL_USERNAME'] = mail_username
-    app.config['MAIL_PASSWORD'] = mail_password
+    application.config['SECURITY_TRACKABLE'] = True
+    application.config['SECURITY_PASSWORD_SALT'] = "salty"
+    application.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    application.config['MAIL_PORT'] = 587
+    application.config['MAIL_USE_SSL'] = True
+    application.config['MAIL_USERNAME'] = mail_username
+    application.config['MAIL_PASSWORD'] = mail_password
 
     print('App configured.')
 
     # Add mail to app.
-    mail.init_app(app)
+    mail.init_app(application)
 
     # For user tracking.
-    app.wsgi_app = ProxyFix(app.wsgi_app, 1)
+    application.wsgi_app = ProxyFix(application.wsgi_app, 1)
 
     # Add login_manager.
-    login_mngr.init_app(app)
+    login_mngr.init_app(application)
     login_mngr.login_view = 'mylogin'
 
     from . import routes, auth
-    app.register_blueprint(routes.bp)
-    app.register_blueprint(auth.auth)
+    application.register_blueprint(routes.bp)
+    application.register_blueprint(auth.auth)
 
     # Setup Flask Security.
     user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
-    security.init_app(app, user_datastore,
+    security.init_app(application, user_datastore,
                       login_form=NewLoginForm)
 
     print('Security setup done.')
@@ -66,7 +66,7 @@ def create_app():
     init_db()
     print('Database connected.')
 
-    return app
+    return application
 
 
 application = create_app()
