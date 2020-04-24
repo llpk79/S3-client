@@ -3,3 +3,5 @@ vert
 __pycache__
 .git
 .gitignore
+Pipfile
+Pipfile.lock
