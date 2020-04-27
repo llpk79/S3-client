@@ -31,7 +31,7 @@ Base.query = db_session.query_property()
 
 
 def init_db():
-    from file_share.models import User, RoleUser, Role, Files, UserFiles
+    from application.models import User, RoleUser, Role, Files
     while True:
         try:
             Base.metadata.create_all(bind=engine)

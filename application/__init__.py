@@ -9,7 +9,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .database import db_session, init_db
 from .forms import NewLoginForm
-from .models import User, Role, Files, RoleUser, UserFiles
+from .models import User, Role, Files, RoleUser
 
 mail = Mail()
 security = Security()

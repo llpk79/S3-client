@@ -49,10 +49,3 @@ class Files(Base):
     last_download = Column(DateTime())
     shared = Column(Boolean())
     owner_id = Column(Integer(), ForeignKey('user.id'), nullable=False)
-
-
-class UserFiles(Base):
-    __tablename__ = 'user_files'
-    id = Column(Integer(), primary_key=True, autoincrement=True)
-    user_id = Column('user_id', Integer(), ForeignKey('User.id'))
-    file_id = Column('file_id', Integer(), ForeignKey('Files.id'))

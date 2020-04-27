@@ -1,6 +1,6 @@
 from flask import Blueprint, g, redirect, flash, render_template, request, url_for, session
 from werkzeug.security import generate_password_hash
-from file_share import db_session
+from application import db_session
 from flask_login import login_manager
 from .models import User
 from flask_security import login_user, RegisterForm, logout_user
@@ -21,7 +21,7 @@ def load_logged_in_user():
         g.user = None
     else:
         try:
-            g.user = User.query.filter_by(id=user_id).one()
+            g.user = User.query.filter_by(id=user_id).one_or_none()
         except StatementError:
             sleep(5)
 
@@ -33,21 +33,23 @@ login_manager.user_loader = load_logged_in_user
 def mylogin():
     """Login view."""
     form = NewLoginForm()
+    user = None
     if form.validate_on_submit():
         # Login and validate the user.
         # user should be an instance of your `User` class
         try:
-            user = User.query.filter_by(email=form.email.data).one()
+            user = User.query.filter_by(email=form.email.data).one_or_none()
         except StatementError:
             sleep(5)
-        g.user = user
-        session['user_id'] = user.id
-        login_user(user, remember=form.remember.data)
-        flash('Logged in successfully.')
+        if user:
+            g.user = user
+            session['user_id'] = user.id
+            login_user(user, remember=form.remember.data)
+            flash('Logged in successfully.')
 
-        next_ = request.args.get('next')
+            next_ = request.args.get('next')
 
-        return redirect(next_) if next_ else redirect(url_for('routes.index'))
+            return redirect(next_) if next_ else redirect(url_for('routes.index'))
     return render_template('security/login_user.html', login_user_form=form)
 
 
@@ -60,6 +62,7 @@ def register():
             password = form.password.data
             error = None
 
+            result = None
             try:
                 stmt = select([User.id]).where(User.email == email_)
                 result = db_session.execute(stmt).fetchone()
