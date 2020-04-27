@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "abe1e14d8e486ed2c8f42c0731f8a6a83f29406d1f8c50e0956875ef768fca95"
+            "sha256": "904cc1adc00a38fb9ead10247c5278f9c2e731fdd31a26baa4276b6f4de42140"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,13 @@
         ]
     },
     "default": {
+        "aurora-data-api": {
+            "hashes": [
+                "sha256:eea5070ea9b41e18d253513f7769ff7166c0468640d5966e610e184cc368c99e",
+                "sha256:ff46b4428c011602e37648a4341ac836cbd7a149db5db900b8f64d48e2c76386"
+            ],
+            "version": "==0.2.0"
+        },
         "babel": {
             "hashes": [
                 "sha256:1aac2ae2d0d8ea368fa90906567f5c08463d98ade155c0c4bfedd6a0f7160e38",
@@ -125,6 +132,14 @@
             ],
             "index": "pypi",
             "version": "==0.14.3"
+        },
+        "gunicorn": {
+            "hashes": [
+                "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626",
+                "sha256:cd4a810dd51bf497552cf3f863b575dabd73d6ad6a91075b65936b151cbf4f9c"
+            ],
+            "index": "pypi",
+            "version": "==20.0.4"
         },
         "itsdangerous": {
             "hashes": [
@@ -261,6 +276,14 @@
             ],
             "index": "pypi",
             "version": "==1.3.15"
+        },
+        "sqlalchemy-aurora-data-api": {
+            "hashes": [
+                "sha256:375f18ab0846c313ebf52b581dc6ad1e622d8d15cbf94f77622f889fe2e315f8",
+                "sha256:6fe9bc8eed26e5f003f7356a2bf9ed524d4e3f8c4fd4677e5f3648ccc71d4c62"
+            ],
+            "index": "pypi",
+            "version": "==0.2.0"
         },
         "urllib3": {
             "hashes": [
