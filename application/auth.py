@@ -87,4 +87,4 @@ def register():
 def logout():
     logout_user()
     session.clear()
-    return redirect(url_for('auth.mylogin'))
+    return redirect(url_for('index'))
