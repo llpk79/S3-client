@@ -46,7 +46,7 @@ def upload():
         if file.filename:
             file.save(file.filename)
             db_file = Files(name=file.filename,
-                            upload_time=str(datetime.now()),
+                            upload_time=f'{datetime.now()}',
                             shared=False,
                             owner_id=g.user.id)
             db_session.add(db_file)
@@ -66,7 +66,7 @@ def download(file_name):
     if request.method == 'GET':
         output = download_file(file_name, bucket)
         file = Files.query.filter_by(name=file_name).all()[-1]
-        file.last_download = str(datetime.now())
+        file.last_download = f'{datetime.now()}'
         db_session.commit()
         with open(output, 'w'):
             return send_file(filename_or_fp=output, as_attachment=True), delete_file(file_name)

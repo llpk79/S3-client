@@ -74,7 +74,7 @@ def register():
 
             if error is None:
                 user = User(email=email_, username=email_, password=generate_password_hash(password),
-                            current_login_at=str(datetime.now()), active=True)
+                            current_login_at=f'{datetime.now()}', active=True)
                 db_session.add(user)
                 db_session.commit()
                 return redirect(url_for('auth.mylogin'))
@@ -87,4 +87,4 @@ def register():
 def logout():
     logout_user()
     session.clear()
-    return redirect(url_for('routes.index'))
+    return redirect(url_for('auth.mylogin'))

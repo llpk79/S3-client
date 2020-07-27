@@ -30,7 +30,8 @@ def get_download_dir():
                 return os.path.join(home, path) + '/Downloads'
             else:
                 new_path = os.path.join(path, directory)
-                paths.append(new_path)
+                if os.path.isdir(new_path):
+                    paths.append(new_path)
 
 
 def download_file(file_name, bucket_name):
