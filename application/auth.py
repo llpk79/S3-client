@@ -100,10 +100,5 @@ def register():
 
 @auth.route("/logout")
 def logout():
-    while True:
-        try:
-            logout_user()
-            return redirect(url_for("routes.index"))
-        except DatabaseError as e:
-            print(e)
-            db_session.rollback()
+    logout_user()
+    return redirect(url_for("routes.index"))
