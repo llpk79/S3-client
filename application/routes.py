@@ -1,9 +1,8 @@
 import os
-from itertools import zip_longest
 from datetime import datetime
 from .database import db_session
 from dotenv import load_dotenv
-from flask import render_template, redirect, request, Blueprint, send_file, g, flash
+from flask import render_template, redirect, request, Blueprint, send_file, g
 from .s3_functions import upload_file, download_file, list_files
 from flask_security import login_required
 from .models import Files
