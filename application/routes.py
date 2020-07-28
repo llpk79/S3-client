@@ -73,7 +73,6 @@ def download(file_name):
     if request.method == "GET":
         output = download_file(file_name, bucket)
         file = Files.query.filter_by(name=file_name).all()[-1]
-        file.upload_time = str(file.upload_time)
         file.last_download = f"{datetime.now()}"
         db_session.commit()
         with open(output, "w"):
