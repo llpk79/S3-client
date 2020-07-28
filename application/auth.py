@@ -15,6 +15,7 @@ from .models import User
 from flask_security import login_user, RegisterForm, logout_user
 from .forms import NewLoginForm
 from sqlalchemy.sql import select
+from sqlalchemy.exc import DatabaseError
 from datetime import datetime
 from sqlalchemy.exc import StatementError
 from time import sleep
@@ -99,5 +100,10 @@ def register():
 
 @auth.route("/logout")
 def logout():
-    logout_user()
-    return redirect(url_for("routes.index"))
+    while True:
+        try:
+            logout_user()
+            return redirect(url_for("routes.index"))
+        except DatabaseError as e:
+            print(e)
+            db_session.commit()
