@@ -106,4 +106,4 @@ def logout():
             return redirect(url_for("routes.index"))
         except DatabaseError as e:
             print(e)
-            db_session.commit()
+            db_session.rollback()
