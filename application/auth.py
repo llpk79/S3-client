@@ -100,5 +100,4 @@ def register():
 @auth.route("/logout")
 def logout():
     logout_user()
-    session.clear()
     return redirect(url_for("routes.index"))
