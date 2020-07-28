@@ -9,7 +9,7 @@ from collections import deque
 def upload_file(file_name, bucket_name):
     """Uploads <file_name> to S3 bucket <bucket_name>."""
     object_name = file_name
-    s3 = boto3.client('s3')
+    s3 = boto3.client("s3")
 
     try:
         response = s3.upload_file(file_name, bucket_name, object_name)
@@ -26,8 +26,8 @@ def get_download_dir():
     while True:
         path = paths.popleft()
         for directory in os.listdir(path):
-            if directory == 'Downloads':
-                return os.path.join(home, path) + '/Downloads'
+            if directory == "Downloads":
+                return os.path.join(home, path) + "/Downloads"
             else:
                 new_path = os.path.join(path, directory)
                 if os.path.isdir(new_path):
@@ -36,7 +36,7 @@ def get_download_dir():
 
 def download_file(file_name, bucket_name):
     """Downloads <file_name> from S3 bucket <bucket_name>."""
-    s3 = boto3.client('s3')
+    s3 = boto3.client("s3")
     path_to_downloads = get_download_dir()
     output = f"{path_to_downloads}/{file_name}"
 
@@ -50,11 +50,11 @@ def download_file(file_name, bucket_name):
 
 def list_files(bucket_name):
     """Lists files in S3 bucket <bucket_name>."""
-    s3 = boto3.client('s3')
+    s3 = boto3.client("s3")
     files = []
 
     try:
-        for item in s3.list_objects(Bucket=bucket_name)['Contents']:
+        for item in s3.list_objects(Bucket=bucket_name)["Contents"]:
             files.append(item)
     except KeyError:
         pass

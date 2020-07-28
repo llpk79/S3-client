@@ -1,4 +1,13 @@
-from flask import Blueprint, g, redirect, flash, render_template, request, url_for, session
+from flask import (
+    Blueprint,
+    g,
+    redirect,
+    flash,
+    render_template,
+    request,
+    url_for,
+    session,
+)
 from werkzeug.security import generate_password_hash
 from application import db_session
 from flask_login import login_manager
@@ -10,12 +19,12 @@ from datetime import datetime
 from sqlalchemy.exc import StatementError
 from time import sleep
 
-auth = Blueprint('auth', __name__, url_prefix='/auth')
+auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @auth.before_app_request
 def load_logged_in_user():
-    user_id = session.get('user_id')
+    user_id = session.get("user_id")
 
     if user_id is None:
         g.user = None
@@ -29,7 +38,7 @@ def load_logged_in_user():
 login_manager.user_loader = load_logged_in_user
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route("/login", methods=["GET", "POST"])
 def mylogin():
     """Login view."""
     form = NewLoginForm()
@@ -43,20 +52,20 @@ def mylogin():
             sleep(5)
         if user:
             g.user = user
-            session['user_id'] = user.id
+            session["user_id"] = user.id
             login_user(user, remember=form.remember.data)
-            flash('Logged in successfully.')
+            flash("Logged in successfully.")
 
-            next_ = request.args.get('next')
+            next_ = request.args.get("next")
 
-            return redirect(next_) if next_ else redirect(url_for('routes.index'))
-    return render_template('security/login_user.html', login_user_form=form)
+            return redirect(next_) if next_ else redirect(url_for("routes.index"))
+    return render_template("security/login_user.html", login_user_form=form)
 
 
-@auth.route('/register', methods=('GET', 'POST'))
+@auth.route("/register", methods=("GET", "POST"))
 def register():
     form = RegisterForm()
-    if request.method == 'POST':
+    if request.method == "POST":
         if form.validate_on_submit():
             email_ = form.email.data
             password = form.password.data
@@ -70,21 +79,26 @@ def register():
                 sleep(5)
 
             if result:
-                error = 'User {} is already registered.'.format(email_)
+                error = "User {} is already registered.".format(email_)
 
             if error is None:
-                user = User(email=email_, username=email_, password=generate_password_hash(password),
-                            current_login_at=f'{datetime.now()}', active=True)
+                user = User(
+                    email=email_,
+                    username=email_,
+                    password=generate_password_hash(password),
+                    current_login_at=f"{datetime.now()}",
+                    active=True,
+                )
                 db_session.add(user)
                 db_session.commit()
-                return redirect(url_for('auth.mylogin'))
+                return redirect(url_for("auth.mylogin"))
 
             flash(error)
-    return render_template('security/register_user.html', register_user_form=form)
+    return render_template("security/register_user.html", register_user_form=form)
 
 
-@auth.route('/logout')
+@auth.route("/logout")
 def logout():
     logout_user()
     session.clear()
-    return redirect(url_for('routes.index'))
+    return redirect(url_for("routes.index"))
