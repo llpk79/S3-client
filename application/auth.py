@@ -45,14 +45,17 @@ def mylogin():
     """Login view."""
     form = NewLoginForm()
     user = None
+    print("I'm getting called!!")
     if form.validate_on_submit():
         # Login and validate the user.
         # user should be an instance of your `User` class
+        print(f'by form.email.data')
         while True:
             try:
                 user = User.query.filter_by(email=form.email.data).one_or_none()
                 break
-            except StatementError:
+            except StatementError as e:
+                print(e)
                 sleep(5)
         if user:
             g.user = user
