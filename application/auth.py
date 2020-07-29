@@ -100,7 +100,7 @@ def register():
                 active=True,
             )
             db_session.add(user)
-            db_session.commit()
+            # db_session.commit()
             return redirect(url_for("auth.mylogin"))
 
         flash(error)
