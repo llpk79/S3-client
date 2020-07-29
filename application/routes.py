@@ -37,7 +37,7 @@ def index():
                     and stored_file.owner_id != g.user.id
                 ):
                     shared_files.append(file)
-    db_session.commit()
+        db_session.commit()
     return render_template(
         "index.html", owned_files=owned_files, shared_files=shared_files
     )

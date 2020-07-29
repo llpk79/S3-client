@@ -37,6 +37,7 @@ def load_logged_in_user():
                 break
             except StatementError as e:
                 print(e)
+                db_session.rollback()
                 sleep(5)
     print('### Done logging in user.')
 
