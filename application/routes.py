@@ -22,6 +22,7 @@ def home():
 @login_required
 def index():
     """Index page rendering index.html file."""
+    db_session.commit()
     all_files = list_files(bucket)
     owned_files = []
     shared_files = []
