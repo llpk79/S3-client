@@ -70,37 +70,36 @@ def mylogin():
 @auth.route("/register", methods=("GET", "POST"))
 def register():
     form = RegisterForm()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            email_ = form.email.data
-            password = form.password.data
-            error = None
+    if request.method == "POST" and form.validate_on_submit():
+        email_ = form.email.data
+        password = form.password.data
+        error = None
+        result = None
+        stmt = select([User.id]).where(User.email == email_)
+        
+        while True:
+            try:
+                result = db_session.execute(stmt).fetchone()
+                break
+            except StatementError:
+                sleep(5)
 
-            result = None
-            while True:
-                try:
-                    stmt = select([User.id]).where(User.email == email_)
-                    result = db_session.execute(stmt).fetchone()
-                    break
-                except StatementError:
-                    sleep(5)
+        if result:
+            error = "User {} is already registered.".format(email_)
 
-            if result:
-                error = "User {} is already registered.".format(email_)
+        if error is None:
+            user = User(
+                email=email_,
+                username=email_,
+                password=generate_password_hash(password),
+                current_login_at=f"{datetime.now()}",
+                active=True,
+            )
+            db_session.add(user)
+            db_session.commit()
+            return redirect(url_for("auth.mylogin"))
 
-            if error is None:
-                user = User(
-                    email=email_,
-                    username=email_,
-                    password=generate_password_hash(password),
-                    current_login_at=f"{datetime.now()}",
-                    active=True,
-                )
-                db_session.add(user)
-                db_session.commit()
-                return redirect(url_for("auth.mylogin"))
-
-            flash(error)
+        flash(error)
     return render_template("security/register_user.html", register_user_form=form)
 
 
