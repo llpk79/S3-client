@@ -35,6 +35,7 @@ def load_logged_in_user():
                 g.user = User.query.filter_by(id=user_id).one_or_none()
                 break
             except StatementError as e:
+                db_session.rollback()
                 print(e)
                 sleep(5)
 
