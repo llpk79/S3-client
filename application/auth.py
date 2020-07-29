@@ -64,6 +64,7 @@ def mylogin():
             g.user = user
             session["user_id"] = user.id
             login_user(user, remember=form.remember.data)
+            db_session.commit()
             flash("Logged in successfully.")
 
             next_ = request.args.get("next")
