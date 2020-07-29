@@ -55,6 +55,7 @@ def mylogin():
         while True:
             try:
                 user = User.query.filter_by(email=form.email.data).one_or_none()
+                db_session.commit()
                 break
             except StatementError as e:
                 print(e)
