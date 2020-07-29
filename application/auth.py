@@ -25,12 +25,13 @@ auth = Blueprint("auth", __name__, url_prefix="/auth")
 @auth.before_app_request
 def load_logged_in_user():
     user_id = session.get("user_id")
-
+    print("### I'm getting called!")
     if user_id is None:
         g.user = None
     else:
         while True:
             try:
+                print("### Again and again!")
                 g.user = User.query.filter_by(id=user_id).one_or_none()
                 break
             except StatementError:
@@ -45,11 +46,9 @@ def mylogin():
     """Login view."""
     form = NewLoginForm()
     user = None
-    print("I'm getting called!!")
     if form.validate_on_submit():
         # Login and validate the user.
         # user should be an instance of your `User` class
-        print(f'by form.email.data')
         while True:
             try:
                 user = User.query.filter_by(email=form.email.data).one_or_none()
