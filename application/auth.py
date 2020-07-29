@@ -67,9 +67,10 @@ def mylogin():
             db_session.commit()
             flash("Logged in successfully.")
 
-            next_ = request.args.get("next")
-
-            return redirect(next_) if next_ else redirect(url_for("routes.index"))
+            # next_ = request.args.get("next")
+            #
+            # return redirect(next_) if next_ else redirect(url_for("routes.index"))
+            return redirect(url_for("routes.index"))
     return render_template("security/login_user.html", login_user_form=form)
 
 
