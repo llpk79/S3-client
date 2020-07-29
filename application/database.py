@@ -18,7 +18,7 @@ secret_arn = os.getenv("SECRET_ARN")
 
 engine = create_engine(
     f"mysql+auroradataapi://admin:{database_password}@{database_endpoint}/{database_name}",
-    convert_unicode=True,
+    pool_recyce=180,
     echo=True,
     connect_args=dict(aurora_cluster_arn=cluster_arn, secret_arn=secret_arn),
 )
