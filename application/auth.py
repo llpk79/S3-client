@@ -30,10 +30,12 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        try:
-            g.user = User.query.filter_by(id=user_id).one_or_none()
-        except StatementError:
-            sleep(5)
+        while True:
+            try:
+                g.user = User.query.filter_by(id=user_id).one_or_none()
+                break
+            except StatementError:
+                sleep(5)
 
 
 login_manager.user_loader = load_logged_in_user
@@ -47,10 +49,12 @@ def mylogin():
     if form.validate_on_submit():
         # Login and validate the user.
         # user should be an instance of your `User` class
-        try:
-            user = User.query.filter_by(email=form.email.data).one_or_none()
-        except StatementError:
-            sleep(5)
+        while True:
+            try:
+                user = User.query.filter_by(email=form.email.data).one_or_none()
+                break
+            except StatementError:
+                sleep(5)
         if user:
             g.user = user
             session["user_id"] = user.id
@@ -73,11 +77,13 @@ def register():
             error = None
 
             result = None
-            try:
-                stmt = select([User.id]).where(User.email == email_)
-                result = db_session.execute(stmt).fetchone()
-            except StatementError:
-                sleep(5)
+            while True:
+                try:
+                    stmt = select([User.id]).where(User.email == email_)
+                    result = db_session.execute(stmt).fetchone()
+                    break
+                except StatementError:
+                    sleep(5)
 
             if result:
                 error = "User {} is already registered.".format(email_)
