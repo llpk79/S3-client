@@ -15,7 +15,6 @@ from .models import User
 from flask_security import login_user, RegisterForm, logout_user
 from .forms import NewLoginForm
 from sqlalchemy.sql import select
-from sqlalchemy.exc import DatabaseError
 from datetime import datetime
 from sqlalchemy.exc import StatementError
 from time import sleep
@@ -76,7 +75,7 @@ def register():
         error = None
         result = None
         stmt = select([User.id]).where(User.email == email_)
-        
+
         while True:
             try:
                 result = db_session.execute(stmt).fetchone()
