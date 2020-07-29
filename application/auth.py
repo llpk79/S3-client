@@ -33,11 +33,9 @@ def load_logged_in_user():
             try:
                 print("### Again and again!")
                 g.user = User.query.filter_by(id=user_id).one_or_none()
-                db_session.commit()
                 break
             except StatementError as e:
                 print(e)
-                db_session.rollback()
                 sleep(5)
     print('### Done logging in user.')
 
@@ -56,7 +54,6 @@ def mylogin():
         while True:
             try:
                 user = User.query.filter_by(email=form.email.data).one_or_none()
-                db_session.commit()
                 break
             except StatementError as e:
                 print(e)
@@ -65,13 +62,12 @@ def mylogin():
             g.user = user
             session["user_id"] = user.id
             login_user(user, remember=form.remember.data)
-            db_session.commit()
+
             flash("Logged in successfully.")
 
-            # next_ = request.args.get("next")
-            #
-            # return redirect(next_) if next_ else redirect(url_for("routes.index"))
-            return redirect(url_for("routes.index"))
+            next_ = request.args.get("next")
+
+            return redirect(next_) if next_ else redirect(url_for("routes.index"))
     return render_template("security/login_user.html", login_user_form=form)
 
 
