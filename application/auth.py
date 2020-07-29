@@ -33,11 +33,12 @@ def load_logged_in_user():
             try:
                 print("### Again and again!")
                 g.user = User.query.filter_by(id=user_id).one_or_none()
+                db_session.commit()
                 break
             except StatementError as e:
-                db_session.commit()
                 print(e)
                 sleep(5)
+    print('### Done logging in user.')
 
 
 login_manager.user_loader = load_logged_in_user
