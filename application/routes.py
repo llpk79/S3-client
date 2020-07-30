@@ -78,12 +78,16 @@ def download(file_name):
         db_session.begin()
         file.last_download = f"{datetime.now()}"
         db_session.commit()
-        print('#### ', type(output))
+        print("#### ", type(output))
         output_file = BytesIO(output)
-        print('### ', type(output_file))
+        print("### ", type(output_file))
         # with open(output, "w"):
         return (
-            send_file(filename_or_fp=output_file, as_attachment=True),
+            send_file(
+                filename_or_fp=output_file,
+                as_attachment=True,
+                attachment_filename=file_name,
+            ),
             # delete_file(file_name),
         )
 
