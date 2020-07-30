@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask import render_template, redirect, request, Blueprint, send_file, g
 from .s3_functions import upload_file, download_file, list_files
 from flask_security import login_required
+from io import BytesIO
 from .models import Files
 
 load_dotenv()
@@ -78,9 +79,11 @@ def download(file_name):
         file.last_download = f"{datetime.now()}"
         db_session.commit()
         print('#### ', type(output))
+        output_file = BytesIO(output)
+        print('### ', type(output_file))
         # with open(output, "w"):
         return (
-            send_file(filename_or_fp=output.getvalue(), as_attachment=True),
+            send_file(filename_or_fp=output_file, as_attachment=True),
             # delete_file(file_name),
         )
 
