@@ -80,7 +80,7 @@ def download(file_name):
         print('#### ', type(output))
         # with open(output, "w"):
         return (
-            send_file(filename_or_fp=output, as_attachment=True),
+            send_file(filename_or_fp=output.getvalue(), as_attachment=True),
             # delete_file(file_name),
         )
 

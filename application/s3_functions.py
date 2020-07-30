@@ -41,11 +41,11 @@ def download_file(file_name, bucket_name):
     output = f"{path_to_downloads}/{file_name}"
 
     try:
-        s3.download_file(bucket_name, file_name, file_name)
+        file = s3.get_object(Bucket=bucket_name, Key=file_name)["Body"].read()
     except Exception as e:
         return e
 
-    return output
+    return file
 
 
 def list_files(bucket_name):
