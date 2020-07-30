@@ -2,7 +2,7 @@
 import boto3
 
 
-def upload_file(file_name, bucket_name):
+def upload_file(file_name: str, bucket_name: str) -> None:
     """Uploads <file_name> to S3 bucket <bucket_name>."""
     object_name = file_name
     s3 = boto3.client("s3")
@@ -13,7 +13,7 @@ def upload_file(file_name, bucket_name):
         print(e)
 
 
-def download_file(file_name, bucket_name):
+def download_file(file_name: str, bucket_name: str) -> bytes:
     """Downloads <file_name> from S3 bucket <bucket_name>."""
     s3 = boto3.client("s3")
 
@@ -26,7 +26,7 @@ def download_file(file_name, bucket_name):
     return file
 
 
-def list_files(bucket_name):
+def list_files(bucket_name: str) -> list:
     """Lists files in S3 bucket <bucket_name>."""
     s3 = boto3.client("s3")
     files = []
