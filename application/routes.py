@@ -72,6 +72,7 @@ def upload():
 @login_required
 def download(file_name):
     """Download a file from the S3 bucket to the local downloads folder."""
+    print(f'### {request.method}')
     if request.method == "GET":
         output_bytes = download_file(file_name, bucket)
 
