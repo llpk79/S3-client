@@ -57,7 +57,7 @@ def upload():
                 owner_id=g.user.id,
             )
             db_session.add(db_file)
-            # db_session.commit()
+            db_session.commit()
             upload_file(file.filename, bucket)
             try:
                 os.remove(file.filename)
