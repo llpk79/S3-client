@@ -82,14 +82,10 @@ def download(file_name):
         output_file = BytesIO(output)
         print("### ", type(output_file))
         # with open(output, "w"):
-        return (
-            send_file(
+        return send_file(
                 filename_or_fp=output_file,
                 as_attachment=True,
                 attachment_filename=file_name,
-            ),
-            # delete_file(file_name),
-        )
 
 
 def delete_file(file_name):
