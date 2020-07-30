@@ -87,13 +87,6 @@ def download(file_name):
         )
 
 
-def delete_file(file_name):
-    try:
-        os.remove(file_name)
-    except OSError:
-        pass
-
-
 @bp.route("/share", methods=["POST"])
 def share():
     """Share files with other users."""
