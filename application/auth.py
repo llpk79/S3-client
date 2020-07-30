@@ -60,8 +60,6 @@ def mylogin():
             session["user_id"] = user.id
             login_user(user, remember=form.remember.data)
 
-            flash("Logged in successfully.")
-
             next_ = request.args.get("next")
 
             return redirect(next_) if next_ else redirect(url_for("routes.index"))
