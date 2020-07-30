@@ -25,19 +25,16 @@ auth = Blueprint("auth", __name__, url_prefix="/auth")
 @auth.before_app_request
 def load_logged_in_user():
     user_id = session.get("user_id")
-    print("### I'm getting called!")
     if user_id is None:
         g.user = None
     else:
         while True:
             try:
-                print("### Again and again!")
                 g.user = User.query.filter_by(id=user_id).one_or_none()
                 break
             except StatementError as e:
                 print(e)
                 sleep(5)
-    print('### Done logging in user.')
 
 
 login_manager.user_loader = load_logged_in_user
