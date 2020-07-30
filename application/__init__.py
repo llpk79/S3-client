@@ -7,7 +7,6 @@ from flask_security import Security, SQLAlchemySessionUserDatastore
 from flask_login import LoginManager
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from . import routes, auth
 from .database import db_session, init_db
 from .forms import NewLoginForm
 from .models import User, Role, Files, RoleUser
@@ -51,6 +50,8 @@ def create_app() -> Flask.wsgi_app:
     # Add login_manager.
     login_mngr.init_app(application.wsgi_app)
     login_mngr.login_view = "mylogin"
+
+    from . import routes, auth
 
     application.register_blueprint(routes.bp)
     application.register_blueprint(auth.auth)
