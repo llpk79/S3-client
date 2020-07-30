@@ -99,8 +99,9 @@ def register():
                 current_login_at=f"{datetime.now()}",
                 active=True,
             )
+            db_session.begin()
             db_session.add(user)
-            # db_session.commit()
+            db_session.commit()
             return redirect(url_for("auth.mylogin"))
 
         flash(error)

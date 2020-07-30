@@ -56,6 +56,7 @@ def upload():
                 shared=False,
                 owner_id=g.user.id,
             )
+            db_session.begin()
             db_session.add(db_file)
             db_session.commit()
             upload_file(file.filename, bucket)
@@ -73,8 +74,9 @@ def download(file_name):
     if request.method == "GET":
         output = download_file(file_name, bucket)
         file = Files.query.filter_by(name=file_name).all()[-1]
+        db_session.begin()
         file.last_download = f"{datetime.now()}"
-        # db_session.commit()
+        db_session.commit()
         with open(output, "w"):
             return (
                 send_file(filename_or_fp=output, as_attachment=True),
@@ -96,6 +98,7 @@ def share():
         shared_files = request.form.getlist("share_files")
         for shared_file in shared_files:
             file = Files.query.filter_by(name=shared_file).one_or_none()
+            db_session.begin()
             file.shared = True
-            # db_session.commit()
+            db_session.commit()
         return redirect("index")
