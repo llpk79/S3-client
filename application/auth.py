@@ -107,5 +107,7 @@ def register():
 @auth.route("/logout")
 def logout():
     """Logout view."""
+    g.user = None
+    session["user_id"] = None
     logout_user()
     return redirect(url_for("routes.index"))
