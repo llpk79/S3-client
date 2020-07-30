@@ -37,6 +37,7 @@ def upload_file(file_name, bucket_name):
 def download_file(file_name, bucket_name):
     """Downloads <file_name> from S3 bucket <bucket_name>."""
     s3 = boto3.client("s3")
+    print(f'### Downloading {file_name}')
     try:
         file = s3.get_object(Bucket=bucket_name, Key=file_name)["Body"].read()
     except Exception as e:
