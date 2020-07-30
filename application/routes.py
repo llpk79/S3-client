@@ -3,7 +3,7 @@ from datetime import datetime
 from .database import db_session
 from dotenv import load_dotenv
 from flask import render_template, redirect, request, Blueprint, send_file, g
-from .s3_functions import upload_file, download_file, list_files
+from .s3_functions import upload_file, download_file, get_file_list
 from flask_security import login_required
 from io import BytesIO
 from .models import Files
@@ -23,12 +23,14 @@ def home():
 @login_required
 def index():
     """Index page rendering index.html file."""
-    all_files = list_files(bucket)
-    owned_files = []
-    shared_files = []
+    owned_files, shared_files = [], []
+    # Get list of files from S3.
+    all_files = get_file_list(bucket)
     if all_files and g.user:
         for file in all_files:
+            # Get file metadata from Aurora.
             stored_files = Files.query.filter_by(name=file["Key"]).all()
+            # Parse files into appropriate list.
             for stored_file in stored_files[-1:]:
                 if stored_file and stored_file.owner_id == g.user.id:
                     owned_files.append(file)
@@ -48,9 +50,11 @@ def index():
 def upload():
     """Upload a file to the S3 bucket."""
     if request.method == "POST":
+        # Get file object from form.
         file = request.files["file"]
         if file.filename:
             file.save(file.filename)
+            # Insert file metadata into Aurora
             db_file = Files(
                 name=file.filename,
                 upload_time=f"{datetime.now()}",
@@ -60,7 +64,10 @@ def upload():
             db_session.begin()
             db_session.add(db_file)
             db_session.commit()
+
+            # Upload file contents to S3.
             upload_file(file.filename, bucket)
+            # Remove local copy of file.
             try:
                 os.remove(file.filename)
             except OSError:
@@ -73,12 +80,15 @@ def upload():
 def download(file_name):
     """Download a file from the S3 bucket to the local downloads folder."""
     if request.method == "GET":
+        # Update file metadata in Aurora.
         file_record = Files.query.filter_by(name=file_name).all()[-1]
         db_session.begin()
         file_record.last_download = f"{datetime.now()}"
         db_session.commit()
 
+        # Get file bytes from S3.
         output_bytes = download_file(file_name, bucket)
+        # Create file object from bytes to pass to send_file.
         output_file = BytesIO(output_bytes)
         return send_file(
                 filename_or_fp=output_file,
@@ -91,8 +101,10 @@ def download(file_name):
 def share():
     """Share files with other users."""
     if request.method == "POST":
+        # Get list of files user wishes to share from form.
         shared_files = request.form.getlist("share_files")
         for shared_file in shared_files:
+            # Update metadata in Aurora to reflect shared status.
             file = Files.query.filter_by(name=shared_file).all()[-1]
             db_session.begin()
             file.shared = True
