@@ -24,11 +24,12 @@ auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth.before_app_request
 def load_logged_in_user():
+    """Loads a user object from Aurora if session['user_id'] is set."""
     user_id = session.get("user_id")
     if user_id is None:
         g.user = None
     else:
-        while True:
+        while True:  # Database may need to initialize before returning result.
             try:
                 g.user = User.query.filter_by(id=user_id).one_or_none()
                 break
@@ -45,10 +46,8 @@ def mylogin():
     """Login view."""
     form = NewLoginForm()
     user = None
-    if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        while True:
+    if form.validate_on_submit():  # Password checked here.
+        while True:  # Database may need to initialize before returning result.
             try:
                 user = User.query.filter_by(email=form.email.data).one_or_none()
                 break
@@ -76,7 +75,7 @@ def register():
         result = None
         stmt = select([User.id]).where(User.email == email_)
 
-        while True:
+        while True:  # Database may need to initialize before returning result.
             try:
                 result = db_session.execute(stmt).fetchone()
                 break

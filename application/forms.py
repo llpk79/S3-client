@@ -48,7 +48,7 @@ class NewLoginForm(LoginForm):
     def validate_on_submit(self):
         if not super(LoginForm, self).validate():
             return False
-        while True:
+        while True:  # Database may need to initialize before returning result.
             try:
                 self.user = User.query.filter_by(email=self.email.data).one()
                 break
