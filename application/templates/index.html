@@ -1,8 +1,8 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - FileShare</title>
+<title>{% block title %}{% endblock %} - Bastard File Share</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
-  <h1>Your S3 file storage</h1>
+  <h1>Bastard file service</h1>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
@@ -23,7 +23,7 @@
       </form>
     </div>
     <h3>Your files:</h3>
-    <p>Click on the filename to download it.</p>
+    <p>Click on the filename to download.</p>
     <p>To share files, check and click 'Share Files'.</p>
     <form action="/share" method="POST" name="share_file">
       <table class="table is-striped is-fullwidth">

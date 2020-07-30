@@ -22,7 +22,7 @@ def home():
 @bp.route("/index", methods=["POST", "GET"])
 @login_required
 def index():
-    """Index page rendering index.html file."""
+    """Index page renders index.html."""
     owned_files, shared_files = [], []
     # Get list of files from S3.
     all_files = get_file_list(bucket)

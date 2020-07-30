@@ -38,5 +38,5 @@ def init_db():
             Base.metadata.create_all(bind=engine)
             break
         except StatementError:
-            print(f'Database initializing, retry in {RETRY_SEC}.')
+            print(f'Database initializing, retry in {RETRY_SEC} seconds.')
             time.sleep(RETRY_SEC)
