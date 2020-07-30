@@ -102,7 +102,7 @@ def share():
     if request.method == "POST":
         shared_files = request.form.getlist("share_files")
         for shared_file in shared_files:
-            file = Files.query.filter_by(name=shared_file).one_or_none()
+            file = Files.query.filter_by(name=shared_file).all()[-1]
             db_session.begin()
             file.shared = True
             db_session.commit()
