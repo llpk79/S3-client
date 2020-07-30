@@ -86,6 +86,7 @@ def download(file_name):
                 filename_or_fp=output_file,
                 as_attachment=True,
                 attachment_filename=file_name,
+        )
 
 
 def delete_file(file_name):
