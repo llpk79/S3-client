@@ -73,15 +73,16 @@ def upload():
 def download(file_name):
     """Download a file from the S3 bucket to the local downloads folder."""
     if request.method == "GET":
-        output = download_file(file_name, bucket)
-        file = Files.query.filter_by(name=file_name).all()[-1]
+        output_bytes = download_file(file_name, bucket)
+
+        file_record = Files.query.filter_by(name=file_name).all()[-1]
         db_session.begin()
-        file.last_download = f"{datetime.now()}"
+        file_record.last_download = f"{datetime.now()}"
         db_session.commit()
-        print("#### ", type(output))
-        output_file = BytesIO(output)
+
+        print("#### ", type(output_bytes))
+        output_file = BytesIO(output_bytes)
         print("### ", type(output_file))
-        # with open(output, "w"):
         return send_file(
                 filename_or_fp=output_file,
                 as_attachment=True,
