@@ -77,10 +77,11 @@ def download(file_name):
         db_session.begin()
         file.last_download = f"{datetime.now()}"
         db_session.commit()
+        print('#### ', type(output))
         # with open(output, "w"):
         return (
             send_file(filename_or_fp=output, as_attachment=True),
-            delete_file(file_name),
+            # delete_file(file_name),
         )
 
 
