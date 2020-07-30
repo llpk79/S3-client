@@ -1,3 +1,5 @@
+from application import db_session
+from datetime import datetime
 from flask import (
     Blueprint,
     g,
@@ -8,23 +10,22 @@ from flask import (
     url_for,
     session,
 )
-from werkzeug.security import generate_password_hash
-from application import db_session
 from flask_login import login_manager
-from .models import User
 from flask_security import login_user, RegisterForm, logout_user
-from .forms import NewLoginForm
-from sqlalchemy.sql import select
-from datetime import datetime
 from sqlalchemy.exc import StatementError
+from sqlalchemy.sql import select
 from time import sleep
+from werkzeug.security import generate_password_hash
+
+from .forms import NewLoginForm
+from .models import User
 
 auth = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @auth.before_app_request
 def load_logged_in_user():
-    """Loads a user object from Aurora if session['user_id'] is set."""
+    """Loads a user object from Aurora if session['user_id'] is set, else returns None."""
     user_id = session.get("user_id")
     if user_id is None:
         g.user = None
@@ -67,24 +68,26 @@ def mylogin():
 
 @auth.route("/register", methods=("GET", "POST"))
 def register():
+    """Register view."""
     form = RegisterForm()
     if request.method == "POST" and form.validate_on_submit():
         email_ = form.email.data
         password = form.password.data
         error = None
         result = None
-        stmt = select([User.id]).where(User.email == email_)
 
+        # Check if user already exists in database. Flash an error message if so.
+        stmt = select([User.id]).where(User.email == email_)
         while True:  # Database may need to initialize before returning result.
             try:
                 result = db_session.execute(stmt).fetchone()
                 break
             except StatementError:
                 sleep(5)
-
         if result:
             error = "User {} is already registered.".format(email_)
 
+        # Add user to database. Redirect to login page.
         if error is None:
             user = User(
                 email=email_,
@@ -104,5 +107,6 @@ def register():
 
 @auth.route("/logout")
 def logout():
+    """Logout view."""
     logout_user()
     return redirect(url_for("routes.index"))
