@@ -1,9 +1,5 @@
-"""Includes functions for interacting with S3 buckets."""
+"""Functions for interacting with S3 buckets."""
 import boto3
-from pathlib import Path
-import sys
-import os
-from collections import deque
 
 
 def upload_file(file_name, bucket_name):
@@ -12,36 +8,20 @@ def upload_file(file_name, bucket_name):
     s3 = boto3.client("s3")
 
     try:
-        response = s3.upload_file(file_name, bucket_name, object_name)
+        s3.upload_file(file_name, bucket_name, object_name)
     except Exception as e:
-        return e
-
-    return response
-
-
-# def get_download_dir():
-#     home = str(Path(sys.executable).home())
-#     paths = deque()
-#     paths.append(home)
-#     while True:
-#         path = paths.popleft()
-#         for directory in os.listdir(path):
-#             if directory == "Downloads":
-#                 return os.path.join(home, path) + "/Downloads"
-#             else:
-#                 new_path = os.path.join(path, directory)
-#                 if os.path.isdir(new_path):
-#                     paths.append(new_path)
+        print(e)
 
 
 def download_file(file_name, bucket_name):
     """Downloads <file_name> from S3 bucket <bucket_name>."""
     s3 = boto3.client("s3")
-    print(f'### Downloading {file_name}')
+
     try:
         file = s3.get_object(Bucket=bucket_name, Key=file_name)["Body"].read()
     except Exception as e:
-        return e
+        print(e)
+        return b""
 
     return file
 
