@@ -42,13 +42,13 @@ def create_app() -> Flask.wsgi_app:
     print("App configured.")
 
     # Add mail to app.
-    mail.init_app(application.wsgi_app)
+    mail.init_app(application)
 
     # For user tracking.
     application.wsgi_app = ProxyFix(application.wsgi_app, 1)
 
     # Add login_manager.
-    login_mngr.init_app(application.wsgi_app)
+    login_mngr.init_app(application)
     login_mngr.login_view = "mylogin"
 
     from . import routes, auth
@@ -58,7 +58,7 @@ def create_app() -> Flask.wsgi_app:
 
     # Setup Flask Security.
     user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
-    security.init_app(application.wsgi_app, user_datastore, login_form=NewLoginForm)
+    security.init_app(application, user_datastore, login_form=NewLoginForm)
 
     print("Security setup done.")
 
