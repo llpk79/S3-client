@@ -9,18 +9,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-database_password = os.getenv("DATA_BASE_PASSWORD")
-database_endpoint = os.getenv("DATA_BASE_ENDPOINT")
-database_name = os.getenv("DATA_BASE_NAME")
-cluster_arn = os.getenv("RDS_ARN")
-secret_arn = os.getenv("SECRET_ARN")
-
+DATABASE_PASSWORD = os.getenv("DATA_BASE_PASSWORD")
+DATABASE_ENDPOINT = os.getenv("DATA_BASE_ENDPOINT")
+DATABASE_NAME = os.getenv("DATA_BASE_NAME")
+CLUSTER_ARN = os.getenv("RDS_ARN")
+SECRET_ARN = os.getenv("SECRET_ARN")
+RETRY_SEC = 5
 
 engine = create_engine(
-    f"mysql+auroradataapi://admin:{database_password}@{database_endpoint}/{database_name}",
+    f"mysql+auroradataapi://admin:{DATABASE_PASSWORD}@{DATABASE_ENDPOINT}/{DATABASE_NAME}",
     pool_recycle=180,
     echo=True,
-    connect_args=dict(aurora_cluster_arn=cluster_arn, secret_arn=secret_arn),
+    connect_args=dict(aurora_cluster_arn=CLUSTER_ARN, secret_arn=SECRET_ARN),
 )
 
 db_session = scoped_session(
@@ -38,4 +38,5 @@ def init_db():
             Base.metadata.create_all(bind=engine)
             break
         except StatementError:
-            time.sleep(5)
+            print(f'Database initializing, retry in {RETRY_SEC}.')
+            time.sleep(RETRY_SEC)
