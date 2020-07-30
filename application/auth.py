@@ -73,8 +73,7 @@ def register():
     if request.method == "POST" and form.validate_on_submit():
         email_ = form.email.data
         password = form.password.data
-        error = None
-        result = None
+        error, result = None, None
 
         # Check if user already exists in database. Flash an error message if so.
         stmt = select([User.id]).where(User.email == email_)
@@ -85,7 +84,7 @@ def register():
             except StatementError:
                 sleep(5)
         if result:
-            error = "User {} is already registered.".format(email_)
+            error = f"User {email_} is already registered."
 
         # Add user to database. Redirect to login page.
         if error is None:
