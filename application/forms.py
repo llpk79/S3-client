@@ -48,11 +48,12 @@ class NewLoginForm(LoginForm):
     def validate_on_submit(self):
         if not super(LoginForm, self).validate():
             return False
-
-        try:
-            self.user = User.query.filter_by(email=self.email.data).one()
-        except StatementError:
-            sleep(5)
+        while True:
+            try:
+                self.user = User.query.filter_by(email=self.email.data).one()
+                break
+            except StatementError:
+                sleep(5)
 
         if self.user is None:
             self.email.errors.append(get_message("USER_DOES_NOT_EXIST")[0])
