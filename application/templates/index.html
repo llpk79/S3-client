@@ -2,7 +2,7 @@
 <title>{% block title %}{% endblock %} - Bastard File Share</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
-  <h1>Bastard file service</h1>
+  <h1>Bastard File Sharing Service</h1>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
@@ -27,14 +27,14 @@
     <p>To share files, check and click 'Share Files'.</p>
     <form action="/share" method="POST" name="share_file">
       <table class="table is-striped is-fullwidth">
-        {% for owned_item in owned_files %}
+        {% for owned_file in owned_files %}
             <tr>
                 <td>
-                    {% if owned_item %}
+                    {% if owned_file %}
                   <label class="checkbox">
-                      <input type="checkbox" name="share_files" value="{{ owned_item.Key }}"/>
+                      <input type="checkbox" name="share_files" value="{{ owned_file.Key }}"/>
                   </label>
-                    <a href="/download/{{ owned_item.Key }}"> {{ owned_item.Key }} </a>
+                    <a href="/download/{{ owned_file.Key }}"> {{ owned_file.Key }} </a>
                     {% endif %}
                   </td>
             </tr>
@@ -48,11 +48,11 @@
     </form>
     <h3>Files shared with you:</h3>
           <table>
-        {% for shared_item in shared_files %}
+        {% for shared_file in shared_files %}
             <tr>
                 <td>
-                    {% if shared_item %}
-                        <a href="/download/{{ shared_item.Key }}"> {{ shared_item.Key }} </a>
+                    {% if shared_file %}
+                        <a href="/download/{{ shared_file.Key }}"> {{ shared_file.Key }} </a>
                     {% endif %}
                 </td>
             </tr>
